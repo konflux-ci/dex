@@ -36,6 +36,16 @@ COPY --from=builder /workspace/dex/dex /bin/dex
 # Copy Root CA Certificates
 COPY --from=builder /etc/pki/tls/certs/ca-bundle.crt /etc/pki/tls/certs/ca-bundle.crt
 
+# Enterprise Contract required labels (one per line for reliable application in multi-arch builds)
+LABEL description="Dex is an identity service that uses OpenID Connect to drive other authentication protocols."
+LABEL distribution-scope="public"
+LABEL com.redhat.component="dex"
+LABEL io.k8s.description="Dex is an identity service that uses OpenID Connect to drive other authentication protocols."
+LABEL name="dex"
+LABEL release="1"
+LABEL url="https://github.com/dexidp/dex"
+LABEL vendor="Red Hat\, Inc."
+LABEL version="1"
 LABEL org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.description="Dex is an identity service that uses OpenID Connect to drive other authentication protocols." \
       org.opencontainers.image.documentation=https://github.com/dexidp/dex \
