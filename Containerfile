@@ -28,7 +28,7 @@ RUN CGO_ENABLED=1 go build -a -installsuffix cgo \
     -o ./dex ./cmd/dex
 
 # Runtime Stage
-FROM registry.access.redhat.com/ubi10-micro:10.1
+FROM registry.access.redhat.com/ubi10-micro:10.1-1769518576
 
 # Copy binary from the build stage
 COPY --from=builder /workspace/dex/dex /bin/dex
