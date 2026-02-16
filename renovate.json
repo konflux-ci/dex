@@ -4,13 +4,5 @@
   "git-submodules": {
     "enabled": true,
     "versioning": "semver"
-  },
-  "packageRules": [
-    {
-      "description": "Disable digest updates for dex submodule (keep patch/minor/major via tags)",
-      "matchDepNames": ["dex"],
-      "matchUpdateTypes": ["digest"],
-      "enabled": false
-    }
-  ]
+  }
 }
