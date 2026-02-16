@@ -4,7 +4,7 @@
 ARG DEX_VERSION
 
 # Build Stage
-FROM registry.access.redhat.com/ubi9/go-toolset:latest AS builder
+FROM registry.access.redhat.com/ubi10/go-toolset@sha256:1edf7bd8e7175ec53a5eefb4e0008adfe30cb7b5ad6834ed7eeef1df9f1920dd AS builder
 
 # Redeclare ARG
 ARG DEX_VERSION
@@ -12,7 +12,7 @@ ARG DEX_VERSION
 # Set working directory to the submodule location
 WORKDIR /workspace/dex
 
-# Copy go mod files and nested API module definitions 
+# Copy go mod files and nested API module definitions
 COPY --chown=1001:0 dex/go.mod dex/go.sum ./
 COPY --chown=1001:0 dex/api/v2/go.mod dex/api/v2/go.sum ./api/v2/
 
@@ -22,18 +22,22 @@ RUN go mod download
 # Copy the rest of the source code
 COPY --chown=1001:0 dex/ ./
 
-# Build the binary
+# Build the binary (CGO for Kubernetes client)
 RUN CGO_ENABLED=1 go build -a -installsuffix cgo \
-    -ldflags="-X github.com/dexidp/dex/version.Version=${DEX_VERSION}" \
+    -ldflags="-w -X github.com/dexidp/dex/version.Version=${DEX_VERSION}" \
     -o ./dex ./cmd/dex
 
 # Runtime Stage
-FROM registry.access.redhat.com/ubi10-micro:10.1-1769518576
+FROM registry.access.redhat.com/ubi10-micro@sha256:551f8ee81be3dbabd45a9c197f3724b9724c1edb05d68d10bfe85a5c9e46a458
 
-# Copy binary from the build stage
-COPY --from=builder /workspace/dex/dex /bin/dex
+# Copy binary to same path as upstream image (so same deployment command works)
+COPY --from=builder /workspace/dex/dex /usr/local/bin/dex
+RUN chmod 755 /usr/local/bin/dex
 
-# Copy Root CA Certificates
+# Web assets required for Dex login UI (same as upstream)
+COPY --from=builder /workspace/dex/web /srv/dex/web
+
+# Copy Root CA Certificates (required for OIDC/connectors)
 COPY --from=builder /etc/pki/tls/certs/ca-bundle.crt /etc/pki/tls/certs/ca-bundle.crt
 
 # Enterprise Contract required labels (one per line for reliable application in multi-arch builds)
@@ -54,4 +58,5 @@ LABEL org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.vendor=Konflux \
       org.opencontainers.image.version=${DEX_VERSION}
 
-ENTRYPOINT ["/bin/dex"]
+USER 1001
+ENTRYPOINT ["/usr/local/bin/dex"]
