@@ -1,4 +1,4 @@
 [submodule "dex"]
 	path = dex
 	url = https://github.com/dexidp/dex.git
-	branch = master
+	branch = v2.45.0
