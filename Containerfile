@@ -4,7 +4,7 @@
 ARG DEX_VERSION
 
 # Build Stage
-FROM registry.access.redhat.com/ubi10/go-toolset@sha256:16d99e6b7495d8e91f23aeca562bdbbba79c263824678acf672d1d3423b9c905 AS builder
+FROM registry.access.redhat.com/ubi10/go-toolset@sha256:d5d48915a31c7c774caf7568f7fbe3b25275e042f9f4de73d13fba39f9b2a987 AS builder
 
 # Redeclare ARG
 ARG DEX_VERSION
