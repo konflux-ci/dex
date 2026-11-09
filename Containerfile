@@ -28,7 +28,7 @@ RUN CGO_ENABLED=1 go build -a -installsuffix cgo \
     -o ./dex ./cmd/dex
 
 # Runtime Stage
-FROM registry.access.redhat.com/ubi10-micro@sha256:1c105e547de5d9e0bc20d06ebabee73b20bc6bba994c50ae3e207684fd8bef2b
+FROM registry.access.redhat.com/ubi10-micro@sha256:8488f5ec082768a01d1ce4e0ef3878f782a40ff6d233afa74bc23d4e740620a4
 
 # Copy binary to same path as upstream image (so same deployment command works)
 COPY --from=builder /workspace/dex/dex /usr/local/bin/dex
